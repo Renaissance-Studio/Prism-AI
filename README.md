@@ -128,6 +128,7 @@ You'll need python version 3.7 or higher to use the Prism AI API wrapper.
 A "Knowledge" object is a bunch of text which you can let your AI model reference. You can feed text data to a knowledge object either via: 
 
  1. Specifying a URL that Prism will crawl for text data, (i.e.):
+ 
     ```py
     knowledge = pai.Knowledge.create(
       method = "url", # The knowledge extraction method
@@ -150,7 +151,9 @@ A "Knowledge" object is a bunch of text which you can let your AI model referenc
       only_base_url = False # Specifies whether or not to accept linked urls outside the provided domain network location
     )
     ```
+
  2. Specifying a Path to a file or directory where Prism will extract text data, 
+
    ```py
     knowledge = pai.Knowledge.create(
       method = "path",
@@ -159,7 +162,9 @@ A "Knowledge" object is a bunch of text which you can let your AI model referenc
       text = "/home/prism_user/Desktop/useful_knowledge.pdf" 
     )
     ```
+
  3. Specifying a string to be added directly to the knowledge
+
    ```py
     knowledge = pai.Knowledge.create(
       method = "text",
