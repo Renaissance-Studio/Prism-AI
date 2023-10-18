@@ -51,19 +51,22 @@ class KnowledgeBase(APIResource):
             for tp, k, nm in zip(types, knowledges, names):
 
                 if tp == "url":
-                    UrlKnowledge.create(
+                    Knowledge.create(
+                        method="url",
                         name=nm,
                         url=k,
                         knowledge_base_id=_id,
                     )
                 elif tp == "text":
-                    TextKnowledge.create(
+                    Knowledge.create(
+                        method="text",
                         name=nm,
                         text=k,
                         knowledge_base_id=_id,
                     )
                 elif tp == "file":
-                    FileKnowledge.create(
+                    Knowledge.create(
+                        method="path",
                         name=nm,
                         file=k,
                         knowledge_base_id=_id,
@@ -148,19 +151,22 @@ class KnowledgeBase(APIResource):
             for tp, k, nm in zip(types, knowledges, names):
 
                 if tp == "url":
-                    UrlKnowledge.create(
+                    Knowledge.create(
+                        method = "url",
                         name=nm,
                         url=k,
                         knowledge_base_id=kb_id,
                     )
                 elif tp == "text":
-                    TextKnowledge.create(
+                    Knowledge.create(
+                        method="text",
                         name=nm,
                         text=k,
                         knowledge_base_id=kb_id,
                     )
                 elif tp == "file":
-                    FileKnowledge.create(
+                    Knowledge.create(
+                        method="path",
                         name=nm,
                         file=k,
                         knowledge_base_id=kb_id,

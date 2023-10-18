@@ -15,7 +15,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
+  <a href="https://github.com/Renaissance-Studio/Prism-AI">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -24,14 +24,14 @@
   <p align="center">
     project_description
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Renaissance-Studio/Prism-AI"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/Renaissance-Studio/Prism-AI">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/Renaissance-Studio/Prism-AI/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/Renaissance-Studio/Prism-AI/issues">Request Feature</a>
   </p>
 </div>
 
@@ -94,20 +94,13 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+You'll need python version 3.7 or higher to use the Prism AI API wrapper.
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
+1. Get a free API Key at [https://www.prism-ai.ch/](https://www.prism-ai.ch/)
 2. Install Prism-AI package 
    ```sh
    pip install prism_ai
@@ -134,9 +127,50 @@ This is an example of how to list things you need to use the software and how to
 
 A "Knowledge" object is a bunch of text which you can let your AI model reference. You can feed text data to a knowledge object either via: 
 
- 1. Specifying a URL that Prism will crawl for text data, 
+ 1. Specifying a URL that Prism will crawl for text data, (i.e.):
+    ```py
+    knowledge = pai.Knowledge.create(
+      method = "url", # The knowledge extraction method
+      name = "prism knowledge", # A name for your knowledge object 
+      kb_id = 1, # The knowledge base id which this knowledge should belong to 
+      url = "https://www.prism-ai.ch/", # The url to scrape (NOTE: only https will work. http urls will be rejected.)
+    )
+    ```
+
+  Similarly, you can crawl a url recursively to extract and crawl all links, sublinks, and sub-sublinks etc... found on a webpage, up to the maximum recursion level (automatically capped at 100)
+
+  ```py
+    knowledge = pai.Knowledge.create(
+      method = "url",
+      name = "prism knowledge",
+      kb_id = 1,
+      url = "https://www.prism-ai.ch/",
+      recursion = True, # Set to False by default
+      max_recursion = 50, # Number of linked pages to also scrape
+      only_base_url = False # Specifies whether or not to accept linked urls outside the provided domain network location
+    )
+    ```
  2. Specifying a Path to a file or directory where Prism will extract text data, 
+   ```py
+    knowledge = pai.Knowledge.create(
+      method = "path",
+      name = "prism knowledge",
+      kb_id = 1,
+      text = "/home/prism_user/Desktop/useful_knowledge.pdf" 
+    )
+    ```
  3. Specifying a string to be added directly to the knowledge
+   ```py
+    knowledge = pai.Knowledge.create(
+      method = "text",
+      name = "prism knowledge",
+      kb_id = 1,
+      url = "Peter Piper picked a peck of pickled peppers." 
+    )
+    ```
+ 4. Plug in directly to your Google Drive, One Drive, Sharepoint, Nextcloud, ... (Coming Soon!)
+
+Note that specifying knowledge via Raw Text is the most customizable method by which to add knowledge to a Knowledge Base, however requires the most customization from the client. Alternatively, you can use our built in web-scrapers (point 2 above) to scrape text data from hundreds of websites siumltaneously and immediately use the resulting data in your R.A.G. pipeline. 
 
 ### Knowledge Bases 
 
@@ -148,9 +182,40 @@ pai.KnowledgeBase.create(
 )
 ```
 
-You can additionally 
+You can additionally add knowledges directly to a knowledge base by specifying them within the knowledge creation call: 
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+```py
+kb = pai.KnowledgeBase.create(
+        knowledges = ["https://www.narwhal.ch/about", "https://www.gwcustom.com/about/"],
+        names = ["test1", "test2"],
+        name = "Test knowledge base"
+        )
+
+```
+
+### Reply
+
+Prism will directly forward your context to OpenAI (or your LLM provider of choice) using the Reply function: 
+
+```py
+reply = pai.Reply.create(
+  prompt = "Tell me something Interesting that about prism-ai.",
+  knowledge_base = []
+)
+```
+
+Having been provided the relevant information from our homepage, the model is able to successfully answer questions about prism! 
+
+You can also stream your response: 
+
+```py
+reply = pai.Reply.stream(
+  prompt = "What is the only pair of twin primes whose difference is just 1?",
+  knowledge_bases = [2,3]
+)
+```
+
+_For more examples, please refer to the [Documentation](https://www.prism-ai.ch/)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -164,7 +229,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Renaissance-Studio/Prism-AI/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -172,8 +237,6 @@ See the [open issues](https://github.com/github_username/repo_name/issues) for a
 
 <!-- CONTRIBUTING -->
 ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
@@ -203,7 +266,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 Prism AI - info@prism-ai.ch
 <!-- [@twitter_handle](https://twitter.com/twitter_handle)-->
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/Renaissance-Studio/Prism-AI](https://github.com/Renaissance-Studio/Prism-AI)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -223,15 +286,15 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[contributors-url]: https://github.com/Renaissance-Studio/Prism-AI/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Renaissance-Studio/Prism-AI.svg?style=for-the-badge
+[forks-url]: https://github.com/Renaissance-Studio/Prism-AI/network/members
+[stars-shield]: https://img.shields.io/github/stars/Renaissance-Studio/Prism-AI.svg?style=for-the-badge
+[stars-url]: https://github.com/Renaissance-Studio/Prism-AI/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Renaissance-Studio/Prism-AI.svg?style=for-the-badge
+[issues-url]: https://github.com/Renaissance-Studio/Prism-AI/issues
+[license-shield]: https://img.shields.io/github/license/Renaissance-Studio/Prism-AI.svg?style=for-the-badge
+[license-url]: https://github.com/Renaissance-Studio/Prism-AI/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
