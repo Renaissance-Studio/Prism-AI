@@ -118,8 +118,10 @@ This is an example of how to list things you need to use the software and how to
    ```
    OR
    ```py
-   prism_ai.api_key = "rs_123...456"
+   import prism_ai as pai
+   pai.api_key = "rs_123...456"
    ```
+5. Start Building! 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -128,7 +130,25 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### Knowledge
+
+A "Knowledge" object is a bunch of text which you can let your AI model reference. You can feed text data to a knowledge object either via: 
+
+ 1. Specifying a URL that Prism will crawl for text data, 
+ 2. Specifying a Path to a file or directory where Prism will extract text data, 
+ 3. Specifying a string to be added directly to the knowledge
+
+### Knowledge Bases 
+
+Knowledge bases provide the organizational structure of your textual information. You can create a knowledge base like this: 
+
+```
+pai.KnowledgeBase.create(
+  name="The name of your KnowledgeBase"
+)
+```
+
+You can additionally 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 

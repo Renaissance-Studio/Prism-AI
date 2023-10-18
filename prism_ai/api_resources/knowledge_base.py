@@ -1,7 +1,5 @@
 from prism_ai.api_resources.api_resource import APIResource
-from prism_ai.api_resources.url_knowledge import UrlKnowledge
-from prism_ai.api_resources.text_knowledge import TextKnowledge
-from prism_ai.api_resources.file_knowledge import FileKnowledge
+from prism_ai.api_resources.knowledge import Knowledge
 
 
 class KnowledgeBase(APIResource):
