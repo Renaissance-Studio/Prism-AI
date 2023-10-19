@@ -128,7 +128,7 @@ You'll need python version 3.7 or higher to use the Prism AI API wrapper.
 A "Knowledge" object is a bunch of text which you can let your AI model reference. You can feed text data to a knowledge object either via: 
 
  1. Specifying a URL that Prism will crawl for text data, (i.e.):
- 
+
     ```py
     knowledge = pai.Knowledge.create(
       method = "url", # The knowledge extraction method
@@ -140,39 +140,40 @@ A "Knowledge" object is a bunch of text which you can let your AI model referenc
 
   Similarly, you can crawl a url recursively to extract and crawl all links, sublinks, and sub-sublinks etc... found on a webpage, up to the maximum recursion level (automatically capped at 100)
 
-  ```py
-    knowledge = pai.Knowledge.create(
-      method = "url",
-      name = "prism knowledge",
-      kb_id = 1,
-      url = "https://www.prism-ai.ch/",
-      recursion = True, # Set to False by default
-      max_recursion = 50, # Number of linked pages to also scrape
-      only_base_url = False # Specifies whether or not to accept linked urls outside the provided domain network location
-    )
+    ```py
+      knowledge = pai.Knowledge.create(
+        method = "url",
+        name = "prism knowledge",
+        kb_id = 1,
+        url = "https://www.prism-ai.ch/",
+        recursion = True, # Set to False by default
+        max_recursion = 50, # Number of linked pages to also scrape
+        only_base_url = False # Specifies whether or not to accept linked urls outside the provided domain network location
+      )
     ```
 
  2. Specifying a Path to a file or directory where Prism will extract text data, 
 
-   ```py
-    knowledge = pai.Knowledge.create(
-      method = "path",
-      name = "prism knowledge",
-      kb_id = 1,
-      text = "/home/prism_user/Desktop/useful_knowledge.pdf" 
-    )
+    ```py
+      knowledge = pai.Knowledge.create(
+        method = "path",
+        name = "prism knowledge",
+        kb_id = 1,
+        text = "/home/prism_user/Desktop/useful_knowledge.pdf" 
+      )
     ```
 
  3. Specifying a string to be added directly to the knowledge
 
-   ```py
-    knowledge = pai.Knowledge.create(
-      method = "text",
-      name = "prism knowledge",
-      kb_id = 1,
-      url = "Peter Piper picked a peck of pickled peppers." 
-    )
+    ```py
+      knowledge = pai.Knowledge.create(
+        method = "text",
+        name = "prism knowledge",
+        kb_id = 1,
+        url = "Peter Piper picked a peck of pickled peppers." 
+      )
     ```
+    
  4. Plug in directly to your Google Drive, One Drive, Sharepoint, Nextcloud, ... (Coming Soon!)
 
 Note that specifying knowledge via Raw Text is the most customizable method by which to add knowledge to a Knowledge Base, however requires the most customization from the client. Alternatively, you can use our built in web-scrapers (point 2 above) to scrape text data from hundreds of websites siumltaneously and immediately use the resulting data in your R.A.G. pipeline. 
