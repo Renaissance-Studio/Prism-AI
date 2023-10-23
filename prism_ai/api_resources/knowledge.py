@@ -14,21 +14,6 @@ supported_file_types = [
     "gz"
 ]
 
-# def bytes_from_file(filename, chunksize=8192):
-     
-#     rbytes = bytearray()
-
-#     with open(filename, "rb") as f:
-#         while True:
-#             chunk = f.read(chunksize)
-#             if chunk:
-#                 for b in chunk:
-#                     rbytes.append(b)
-#             else:
-#                 break
-    
-#     return bytes(rbytes)
-
 class Knowledge(APIResource):
 
     '''
@@ -157,6 +142,7 @@ class Knowledge(APIResource):
 
                     with open(path, 'rb') as file:
                         
+                        unique_name = str(path).split("/")[-1]
                         print("Uploading file "+str(path)+" as "+str(name)+" ...")
 
                         file_like = FileWithProgress(file, file_size)
@@ -165,6 +151,7 @@ class Knowledge(APIResource):
                         url = instance.api_url + "upload/"
 
                         with tqdm(total=file_size, unit='B', unit_scale=True, dynamic_ncols=True) as progress_bar:
+
                             response = requests.post(url, data=file_like, headers=headers)
 
                     return {"ASDF":"FUCK"}
