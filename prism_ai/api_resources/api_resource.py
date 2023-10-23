@@ -68,7 +68,8 @@ class APIResource:
         else:
             
             if "response_stream" not in endpoint_url:
-                try:
+                # try:
+                if True:
                     response = requests.get(
                         instance.api_url + endpoint_url,
                         headers=instance.create_headers(),
@@ -82,7 +83,8 @@ class APIResource:
                     instance.text = response.text
                     instance.status = response.status_code
 
-                except:
+                # except:
+                else:
                     raise ValueError("There was an error with your request. Please check your parameters and try again.")
 
                 
@@ -92,6 +94,7 @@ class APIResource:
 
         return instance
     
+
     @classmethod
     def _post(
         cls,

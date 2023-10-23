@@ -8,7 +8,7 @@ The prism python package - a python wrapper for the prism API.
 import os
 
 api_key = os.getenv('PRISM_API_KEY')
-api_url = "https://gateway.renaissance-studio.ai/"
+api_url = "https://gateway.renaissancestudio.ai/"
 timeout = 30
 
 from prism_ai.api_resources.knowledge import Knowledge
