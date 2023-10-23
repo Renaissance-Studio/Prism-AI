@@ -10,7 +10,8 @@ supported_file_types = [
     "docx",
     "txt",
     "md",
-    "odt"
+    "odt",
+    "gz"
 ]
 
 # def bytes_from_file(filename, chunksize=8192):
@@ -34,18 +35,6 @@ class Knowledge(APIResource):
     Knowledge Object to be created
     '''
     
-    class FileWithProgress:
-        def __init__(self, file, total_size):
-            self.file = file
-            self.total_size = total_size
-            self.read_size = 0
-
-        def read(self, chunk_size):
-            data = self.file.read(chunk_size)
-            self.read_size += len(data)
-            progress_bar.update(len(data))
-            return data
-
     @classmethod
     def create(
         cls,
@@ -62,6 +51,19 @@ class Knowledge(APIResource):
         text = params.pop("text", None)
         url = params.pop("url", None)
         path = params.pop("path", None)
+
+        class FileWithProgress:
+            def __init__(self, file, total_size):
+                self.file = file
+                self.total_size = total_size
+                self.read_size = 0
+
+            def read(self, chunk_size):
+                data = self.file.read(chunk_size)
+                self.read_size += len(data)
+                progress_bar.update(len(data))
+                return data
+
 
         if method == "text":
             if None in [name, kb_id, text]:
@@ -123,41 +125,44 @@ class Knowledge(APIResource):
                 return None
             
             else:
-
-                if path.is_dir(): # We're dealing with a directory.
-
+                try:
                     dir_path = pathlib.Path(path)
-                    dir_list = list(dir_path.rglob('*'))
-                    file_list = []
-                    supported_file_list = []
+                except: 
+                    raise ValueError("The path you provided is not valid.")
 
-                    for elt in dir_list:
+                if dir_path.is_dir(): # We're dealing with a directory.
 
-                        if elt.is_dir():
-                            print(f"Omitting directory {elt} ... Not a file.")
-                            continue
-                        else:
-                            file_list.append(elt)
-
-                    print("\n\n")
-                    for elt in file_list:
-                        
-                        if str(elt).split(".")[-1] not in supported_file_types:
-                            print(f"Omitting file {elt} ... Unsupported file type.")
-                            continue
-                        else:
-                            supported_file_list.append(elt)
+                    print("You've provided a directory, to the Knowledge.create method.\n\nPlease use the KnowledgeBase.create method to create a KnowledgeBase from a directory, to create multiple knowledge objects from a directory.")
+                    
 
                 else: # We're dealing with a file. 
 
+                    instance = cls(endpoint_url="upload/")
                     file_size = os.path.getsize(path)
 
-                    with open(path, 'rb') as file:
+                    info_instance = instance._get(endpoint_url="basic_user_info/", quiet=True)
+                    user_info = info_instance.json
 
-                        file_like = cls.FileWithProgress(file, file_size)
+                    if user_info["max_storage"] != None:
+                        if file_size / (1024 * 1024) > user_info["max_storage"]:
+                            raise ValueError("You have exceeded your storage limit. Please upgrade your plan to continue using prism.")
+                    else: 
+                        pass
+                    if user_info["tokens_remaining"] <= 0:
+                        raise ValueError("You have no tokens remaining. Please upgrade your plan to continue using prism.")
+                    if file_size > 4 * 1024 * 1024 * 1024:
+                        raise ValueError("The file you provided is too large. The maximum file size is 4GB.")
+                    if str(path).split(".")[-1] not in supported_file_types:
+                        raise ValueError("The file you provided is not supported. \nSupported file types are: \n\n - pdf \n - doc \n - docx \n - txt \n - md \n - odt")
+
+                    with open(path, 'rb') as file:
+                        
+                        print("Uploading file "+str(path)+" as "+str(name)+" ...")
+
+                        file_like = FileWithProgress(file, file_size)
 
                         headers = {'Content-Type': 'application/octet-stream', 'Filename': name}
-                        url = cls.api_url + "upload/"
+                        url = instance.api_url + "upload/"
 
                         with tqdm(total=file_size, unit='B', unit_scale=True, dynamic_ncols=True) as progress_bar:
                             response = requests.post(url, data=file_like, headers=headers)
