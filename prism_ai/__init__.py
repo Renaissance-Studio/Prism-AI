@@ -9,6 +9,7 @@ import os
 
 api_key = os.getenv('PRISM_API_KEY')
 api_url = "https://gateway.renaissancestudio.ai/"
+# api_url = "http://localhost:8000/"
 timeout = 30
 
 from prism_ai.api_resources.knowledge import Knowledge

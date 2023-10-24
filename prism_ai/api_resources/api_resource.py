@@ -200,6 +200,7 @@ class APIResource:
 
         json = {
             "name": params.pop("name", None),
+            "s3_bucket": params.pop("s3_bucket", None),
         }
 
         params = {

@@ -3,6 +3,9 @@ import requests
 from tqdm import tqdm
 import os
 import pathlib
+import httpx
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 supported_file_types = [
     "pdf",
@@ -13,6 +16,11 @@ supported_file_types = [
     "odt",
     "gz"
 ]
+
+# async def async_post(url, data, headers):
+#     async with httpx.AsyncClient() as client:
+#         response = await client.post(url, data=data, headers=headers)
+#     return response
 
 class Knowledge(APIResource):
 
@@ -38,13 +46,19 @@ class Knowledge(APIResource):
         path = params.pop("path", None)
 
         class FileWithProgress:
-            def __init__(self, file, total_size):
+            def __init__(self, file, total_size, chunk_size=1024*1024):
                 self.file = file
                 self.total_size = total_size
+                self.chunk_size = chunk_size
                 self.read_size = 0
 
-            def read(self, chunk_size):
-                data = self.file.read(chunk_size)
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                data = self.file.read(self.chunk_size)
+                if not data:
+                    raise StopIteration
                 self.read_size += len(data)
                 progress_bar.update(len(data))
                 return data
@@ -142,17 +156,30 @@ class Knowledge(APIResource):
 
                     with open(path, 'rb') as file:
                         
-                        unique_name = str(path).split("/")[-1]
+                        unique_name = "kb_"+str(kb_id)+"/"+name
                         print("Uploading file "+str(path)+" as "+str(name)+" ...")
 
                         file_like = FileWithProgress(file, file_size)
 
-                        headers = {'Content-Type': 'application/octet-stream', 'Filename': name}
+                        headers = instance.create_headers()
+                        headers['Content-Type'] = 'application/octet-stream'
+                        headers['Filename'] = unique_name
+                        headers['Connection'] = 'keep-alive'
+                        headers['Keep-Alive'] = '300'
+
                         url = instance.api_url + "upload/"
 
-                        with tqdm(total=file_size, unit='B', unit_scale=True, dynamic_ncols=True) as progress_bar:
+                        with requests.Session() as session: 
+                            with tqdm(total=file_size, unit='B', unit_scale=True, dynamic_ncols=True) as progress_bar:
+                                response = session.post(url, data=file_like, headers=headers)
 
-                            response = requests.post(url, data=file_like, headers=headers)
+                        return
+                        # return cls._post(
+                        #     endpoint_url=f"users/knowledge_base/{kb_id}/knowledge_from_file/",
+                        #     name=name,
+                        #     s3_bucket=unique_name,
+                        #     **params
+                        # )
 
-                    return {"ASDF":"FUCK"}
+                    return {}
 

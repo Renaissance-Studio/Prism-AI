@@ -26,7 +26,7 @@ class KnowledgeBase(APIResource):
         **params,
     ):
         '''
-        Create a new Knowledge Base Object 
+        Add knowledge to an existing knowledge base
         '''
 
         _id = params.pop("id", None)
