@@ -35,8 +35,17 @@ class APIResource:
     ):
         print('This is a parent class for API resource attributes. It is not meant to be called directly. Please refer to our documentation for proper usage of the API.')
 
-    def create_headers(self):
-        return {"Authorization":self.api_key}
+    def create_headers(self, kb_id=None, unique_name=None):
+
+        headers = {"Authorization":self.api_key}
+        if None not in [kb_id, unique_name]:
+            headers['Content-Type'] = 'application/octet-stream'
+            headers['Filename'] = unique_name
+            headers['Connection'] = 'keep-alive'
+            headers['Keep-Alive'] = '300'
+            headers['kb_id'] = str(kb_id)
+            
+        return headers
 
     def __repr__(self):
         return jsn.dumps(self.json, indent=4, sort_keys=True)

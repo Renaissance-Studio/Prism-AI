@@ -141,10 +141,6 @@ class KnowledgeBase(APIResource):
                 # **params,
             )
 
-            
-            
-             
-
     @classmethod
     def infer_types(
         cls,
@@ -194,4 +190,6 @@ class KnowledgeBase(APIResource):
             )
 
             instance.add(id=instance.json['id'], **params)
+
+            return instance
 

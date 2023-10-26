@@ -161,19 +161,18 @@ class Knowledge(APIResource):
 
                         file_like = FileWithProgress(file, file_size)
 
-                        headers = instance.create_headers()
-                        headers['Content-Type'] = 'application/octet-stream'
-                        headers['Filename'] = unique_name
-                        headers['Connection'] = 'keep-alive'
-                        headers['Keep-Alive'] = '300'
-
+                        headers = instance.create_headers(kb_id=kb_id, unique_name=unique_name)
                         url = instance.api_url + "upload/"
 
                         with requests.Session() as session: 
                             with tqdm(total=file_size, unit='B', unit_scale=True, dynamic_ncols=True) as progress_bar:
                                 response = session.post(url, data=file_like, headers=headers)
-
-                        return
+                            # k_id = response.json()["id"]
+                        
+                        return response
+                        # return cls._get(
+                        #     endpoint_url=f"knowledge/{k_id}/",
+                        # )
                         # return cls._post(
                         #     endpoint_url=f"users/knowledge_base/{kb_id}/knowledge_from_file/",
                         #     name=name,
